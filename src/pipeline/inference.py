@@ -13,7 +13,7 @@ import cv2
 from prefect import task
 
 
-def load_model(weights_path: str) -> object:
+def load_model(weights_path: str, model_config: dict) -> object:
     """
     Loads Megadetector from torch hub and assigns pretrained model weights.
 
@@ -22,12 +22,21 @@ def load_model(weights_path: str) -> object:
     weights_path : str
         path to weights .pt file
 
+    model_config: dict
+        model configurations
+
     Returns
     -------
     object
-        _description_
+        pytorch model (yolov5)
     """
     model = torch.hub.load("ultralytics/yolov5:v6.2", "custom", weights_path)
+    model.eval()
+
+    # overwrite parameters
+    model.conf = model_config['CONFIDENCE_THRESHOLD']
+    model.iou = model_config['IOU_THRESHOLD']
+    model.max_det = model_config['MAXIMUM_DETECTIONS']
 
     return model
 
@@ -36,6 +45,7 @@ def load_model(weights_path: str) -> object:
 def megadetector_detect(
     weights_path: str,
     images: list,
+    model_config: dict,
     inference_size: int = 1280,
     disable_pbar: bool = False,
 ) -> pd.DataFrame:
@@ -63,7 +73,7 @@ def megadetector_detect(
         for given set of images
     """
     # load model for inference
-    model = load_model(weights_path=weights_path)
+    model = load_model(weights_path=weights_path, model_config=model_config)
 
     all_results, times = [], []
     with tqdm(total=len(images)) as pbar:
@@ -71,8 +81,9 @@ def megadetector_detect(
             start_time = time.perf_counter()
             # read image
             im2 = cv2.imread(file)[:, :, ::-1]
-            # model inference
-            results = model([im2], size=inference_size)
+            # forward pass
+            with torch.no_grad():
+                results = model([im2], size=model_config["INFERENCE_SIZE"])
 
             # post process output
             results = results.pandas().xyxy[0]
