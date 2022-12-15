@@ -2,6 +2,7 @@ import os
 import sys
 from pathlib import Path
 import yaml
+import time
 from multiprocessing.pool import ThreadPool as Pool
 
 import pandas as pd
@@ -18,7 +19,12 @@ from .clients import get_db_client, edit_schema
 # --------------------------------------------------------
 # test funcs
 # --------------------------------------------------------
-
+@task
+def test_load_batch(sample_df_path, batchsize):
+    df = pd.read_csv(sample_df_path)
+    data = df[df['processed'] == False].iloc[:batchsize]
+    
+    return data
 
 
 # --------------------------------------------------------
