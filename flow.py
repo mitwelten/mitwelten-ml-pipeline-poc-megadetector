@@ -10,6 +10,8 @@ from prefect import flow
 # custom imports
 from src.pipeline.inference import megadetector_detect
 from src.pipeline.clients import get_db_client, get_minio_client
+from src.pipeline.extract import test_load_batch
+from src.pipeline.load import test_update_checkpoint
 
 
 @flow(
@@ -31,7 +33,7 @@ def megadetector_pipeline(
     if not IS_TEST:
         db_client = get_db_client(config_path=SOURCE_CONFIG_PATH)
         minio_client = get_minio_client(config_path=SOURCE_CONFIG_PATH)
-    else:    
+    else:
         with open(SOURCE_CONFIG_PATH, 'rb') as yaml_file:
             source_config = yaml.load(yaml_file, yaml.FullLoader)
 
@@ -39,13 +41,11 @@ def megadetector_pipeline(
     with open(MODEL_CONFIG_PATH, 'r') as json_file:
         model_config = json.load(json_file)
 
-
-
     # Extract ----------------------------------------
     # load checkpoint
     if IS_TEST:
-        df = pd.read_csv(source_config['SAMPLES_DF'])
-        data = df[df['processed'] == False].iloc[:BATCHSIZE]
+        data = test_load_batch(
+            sample_df_path=source_config['SAMPLES_DF'], batchsize=BATCHSIZE)
         images = data['image_path'].to_list()
     else:
         raise NotImplementedError
@@ -61,14 +61,12 @@ def megadetector_pipeline(
 
     # Load -------------------------------------------
     if IS_TEST:
-        # writes results to a dataframe and updates the given 
+        # writes results to a dataframe and updates the given
         # checkpoint dataframe
-        if os.path.isfile(source_config['RESULTS_DF']):
-            previous_results = pd.read_csv(source_config['RESULTS_DF'])
-            results = pd.concat([previous_results, results], axis=0)
-        results.to_csv(source_config['RESULTS_DF'], index=False)
-        df.loc[df['filename'].isin(data['filename']), 'processed'] = 1
-        df.to_csv(source_config['SAMPLES_DF'])
+        results.to_csv(source_config['RESULTS_DF'], index=False, mode='a')
+        test_update_checkpoint(
+            sample_df_path=source_config['SAMPLES_DF'], updates=data)
+
     else:
         raise NotImplementedError
 
