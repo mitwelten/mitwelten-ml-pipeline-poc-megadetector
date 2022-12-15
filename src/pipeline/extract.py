@@ -15,6 +15,9 @@ from prefect import task
 from .clients import get_db_client, edit_schema
 
 
+# --------------------------------------------------------
+# test funcs
+# --------------------------------------------------------
 @task
 def extract_data_from_dir(dir_name: str) -> pd.DataFrame:
     data_dir = Path(dir_name)
@@ -23,9 +26,10 @@ def extract_data_from_dir(dir_name: str) -> pd.DataFrame:
     return images
 
 
-# -------------------------------------
-# this functino below need to be adjusted with the relevant table names from the Db
-# -------------------------------------
+# --------------------------------------------------------
+# These functions below require an adaption according
+# to the table names of the camera trap meta and file infos 
+# --------------------------------------------------------
 @task(
     name="Get checkpoint of unprocessed images",
 )
@@ -203,7 +207,7 @@ def build_mount_paths(data: pd.DataFrame, mount_path: str) -> pd.DataFrame:
     pd.DataFrame
         checkpoint dataframe with transformed object name
     """
-    _join_mount_paths = lambda x: os.path.join(mount_path, x)
+    def _join_mount_paths(x): return os.path.join(mount_path, x)
     data["object_name"] = data["object_name"].apply(_join_mount_paths)
 
     return data
