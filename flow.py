@@ -6,6 +6,7 @@ import json
 import pandas as pd
 
 from prefect import flow
+from prefect.states import Cancelled
 
 # custom imports
 from src.pipeline.inference import megadetector_detect
@@ -23,7 +24,7 @@ def megadetector_pipeline(
     WEIGHTS_PATH: str = "model_weights/md_v5a.0.0.pt",
     SOURCE_CONFIG_PATH: str = "source_config.yaml",
     MODEL_CONFIG_PATH: str = "model_config.json",
-    BATCHSIZE: int = 16,
+    BATCHSIZE: int = 32,
     INFERENCE_SIZE: int = 1280,
     DISABLE_PBAR: bool = False,
     IS_TEST: bool = True
@@ -46,6 +47,8 @@ def megadetector_pipeline(
     if IS_TEST:
         data = test_load_batch(
             sample_df_path=source_config['SAMPLES_DF'], batchsize=BATCHSIZE)
+        if len(data) == 0:
+            return Cancelled()
         images = data['image_path'].to_list()
     else:
         raise NotImplementedError
