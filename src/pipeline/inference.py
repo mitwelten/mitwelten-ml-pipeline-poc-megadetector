@@ -76,24 +76,21 @@ def megadetector_detect(
     model = load_model(weights_path=weights_path, model_config=model_config)
 
     all_results, times = [], []
-    with tqdm(total=len(images)) as pbar:
-        for file in tqdm(images, disable=disable_pbar):
-            start_time = time.perf_counter()
-            # read image
-            im2 = cv2.imread(file)[:, :, ::-1]
-            # forward pass
-            with torch.no_grad():
-                results = model([im2], size=model_config["INFERENCE_SIZE"])
+    for file in tqdm(images, disable=disable_pbar):
+        start_time = time.perf_counter()
+        # read image
+        im2 = cv2.imread(file)[:, :, ::-1]
+        # forward pass
+        with torch.no_grad():
+            results = model([im2], size=model_config["INFERENCE_SIZE"])
 
-            # post process output
-            results = results.pandas().xyxy[0]
-            results["object_name"] = file
-            all_results.append(results)
+        # post process output
+        results = results.pandas().xyxy[0]
+        results["object_name"] = file
+        all_results.append(results)
 
-            end_time = time.perf_counter() - start_time
-            times.append(end_time)
-
-            pbar.update(1)
+        end_time = time.perf_counter() - start_time
+        times.append(end_time)
 
     print(f"Inference mean Time: {np.mean(times).round(3)} seconds for {len(images)}")
 
