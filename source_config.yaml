@@ -1,0 +1,18 @@
+# Database
+POSTGRES_USER: "user"
+POSTGRES_PASSWORD: "password"
+DB_HOST: "host"
+DB_PORT: 5432
+DB_NAME: "name"
+DB_SCHEMA: "test"
+
+# Minio
+MINIO_BUCKET_NAME: "test"
+MINIO_HOST: "host:1234"
+MINIO_ACCESS_KEY: "test"
+MINIO_SECRET_KEY: "secret"
+MINIO_SECURE: false
+
+# Test
+SAMPLES_DF: "./utils/test/sample_df.csv"
+RESULTS_DF: "./utils/test/result.csv"
