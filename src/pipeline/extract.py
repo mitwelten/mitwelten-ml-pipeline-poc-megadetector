@@ -18,12 +18,7 @@ from .clients import get_db_client, edit_schema
 # --------------------------------------------------------
 # test funcs
 # --------------------------------------------------------
-@task
-def extract_data_from_dir(dir_name: str) -> pd.DataFrame:
-    data_dir = Path(dir_name)
-    images = data_dir.glob("*.jpg")
 
-    return images
 
 
 # --------------------------------------------------------
