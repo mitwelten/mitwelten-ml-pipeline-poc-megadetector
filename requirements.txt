@@ -15,3 +15,4 @@ seaborn==0.12.1
 # other helper packages
 torchsummary
 PyYAML==6.0
+requests>=2.28.1
