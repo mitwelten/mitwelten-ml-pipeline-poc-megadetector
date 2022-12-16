@@ -24,10 +24,38 @@ def megadetector_pipeline(
     SOURCE_CONFIG_PATH: str = "source_config.yaml",
     MODEL_CONFIG_PATH: str = "model_config.json",
     BATCHSIZE: int = 32,
-    INFERENCE_SIZE: int = 1280,
     DISABLE_PBAR: bool = False,
     IS_TEST: bool = True
 ):
+    """
+    This flow implements a pipeline for the Megadetector model from microsoft
+
+    flow overview:
+    get configurations() -> get checkpoint() -> megadetector_inference() -> load_data()
+
+    Parameters
+    ----------
+    WEIGHTS_PATH : str, optional
+        path to stored megadetector weights, by default "model_weights/md_v5a.0.0.pt"
+
+    SOURCE_CONFIG_PATH : str, optional
+        path to source configuration file, by default "source_config.yaml"
+
+    MODEL_CONFIG_PATH : str, optional
+        path to the model configuration file, by default "model_config.json"
+
+    BATCHSIZE : int, optional
+        batchsize for processing, by default 32
+
+    DISABLE_PBAR : bool, optional
+        _description_, by default False
+    IS_TEST : bool, optional
+        _description_, by default True
+
+    Raises
+    ------
+    NotImplementedError
+    """
 
     # Load configs -----------------------------------
     if not IS_TEST:
@@ -58,7 +86,7 @@ def megadetector_pipeline(
         images=images,
         model_config=model_config,
         disable_pbar=DISABLE_PBAR,
-        inference_size=INFERENCE_SIZE,
+        inference_size=model_config['INFERENCE_SIZE'],
     )
 
     # Load -------------------------------------------
