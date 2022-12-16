@@ -92,7 +92,7 @@ def megadetector_detect(
         end_time = time.perf_counter() - start_time
         times.append(end_time)
 
-    print(f"Inference mean Time: {np.mean(times).round(3)} seconds for {len(images)}")
+    print(f"Inference mean Time: {np.mean(times).round(3)} seconds for {len(images)} Images")
 
     # concatenate all outputs
     all_results = pd.concat(all_results, axis=0).reset_index(drop=True)
