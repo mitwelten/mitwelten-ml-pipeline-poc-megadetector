@@ -20,9 +20,10 @@ def main():
     WEIGHTS_B = 'https://github.com/microsoft/CameraTraps/releases/download/v5.0/md_v5b.0.0.pt'
     OUTPUT_B = 'model_weights/md_v5b.0.0.pt'
 
+    print('Start Download weights ...')
     download_url(url=WEIGHTS_A, output_path=OUTPUT_A)
     download_url(url=WEIGHTS_B, output_path=OUTPUT_B)
-
+    
 
 if __name__ == '__main__':
     main()
