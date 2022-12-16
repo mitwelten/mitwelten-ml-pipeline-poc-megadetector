@@ -13,4 +13,8 @@ COPY . .
 # install relevant packages
 RUN python -m pip install -r requirements.txt
 
+# download model weights
+RUN python src/scripts/download_weights.py
+
+
 ENTRYPOINT [ "bash" ]

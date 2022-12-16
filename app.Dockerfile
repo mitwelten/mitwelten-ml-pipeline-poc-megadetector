@@ -14,6 +14,9 @@ COPY . .
 RUN python -m pip install -r requirements.txt
 RUN python -m pip install jupyterlab
 
+# download model weigths
+RUN python src/scripts/download_weights.py
+
 # expose port for jupyter lab
 EXPOSE 8888
 
