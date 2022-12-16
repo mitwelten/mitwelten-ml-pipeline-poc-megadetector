@@ -7,15 +7,15 @@ RUN apt-get install -y wget tzdata
 
 WORKDIR /root
 
+# download model weigths
+RUN python src/scripts/download_weights.py
+
 # copy content from local repo
 COPY . .
 
 # install relevant packages
 RUN python -m pip install -r requirements.txt
 RUN python -m pip install jupyterlab
-
-# download model weigths
-RUN python src/scripts/download_weights.py
 
 # expose port for jupyter lab
 EXPOSE 8888
