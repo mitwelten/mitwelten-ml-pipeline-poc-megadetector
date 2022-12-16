@@ -1,6 +1,6 @@
 ![MIT License](https://img.shields.io/badge/Organization-Mitwelten-green)
 
-# poc-megadetector-pipeline
+# mitwelten-ml-pipeline-poc-megadetector
 This repo implements a data pipeline for the Megadetector model. The Megadetector is a generic object detection model trained on a large amount of camera trap images. It can detect animals, humans and vehicules.
 
 ## Setup and Installation
